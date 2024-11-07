@@ -102,11 +102,19 @@ void BulletGo::FixedUpdate(float dt)
 			HitBox& boxZombie = zombie->GetHitBox();
 			if (Utils::CheckCollision(hitBox, boxZombie) && zombie->GetType() != ZombieGo::Types::Death)
 			{
+				SOUND_MGR.PlaySfx("sound/hit.wav");
 				zombie->OnDamage(damage);
 				sceneGame->ReturnBullet(this);
 			}
 			break;
 		}
+	}
+
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSizeF();
+	if (position.x < -windowSize.x * 0.5f || position.x > windowSize.x + windowSize.x * 0.5f ||
+		position.y < -windowSize.y * 0.5f || position.y > windowSize.y + windowSize.y * 0.5f)
+	{
+		sceneGame->ReturnBullet(this);
 	}
 }
 

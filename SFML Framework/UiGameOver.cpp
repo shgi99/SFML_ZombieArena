@@ -55,7 +55,7 @@ void UiGameOver::Reset()
 	text.setFillColor(sf::Color::Red);
 	text.setOutlineColor(sf::Color::Black);
 	text.setOutlineThickness(1.f);
-	text.setString("PRESS ENTER\nTO CONTINUE");
+	text.setString("PRESS ENTER\nTO RESTART..");
 	Utils::SetOrigin(text, Origins::MC);
 }
 

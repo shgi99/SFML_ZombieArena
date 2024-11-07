@@ -60,7 +60,7 @@ void UiUpgrade::Reset()
 		text[i].setCharacterSize(textSize);
 		text[i].setFillColor(sf::Color::White);
 		Utils::SetOrigin(text[i], Origins::TL);
-		text[i].setPosition(200.f, 200.f + (100.f * i));
+		text[i].setPosition(100.f, 100.f + (100.f * i));
 	}
 	text[0].setString("1 - INCREASED RATE OF FIRE");
 	text[1].setString("2 - INCREASED CLIP SIZECNEXT RELOAD");
@@ -68,6 +68,7 @@ void UiUpgrade::Reset()
 	text[3].setString("4 - INCREASED RUN SPEED");
 	text[4].setString("5 - MORE AND BETTER HEALTH PICKUPS");
 	text[5].setString("6 - MORE AND BETTER AMMO PICKUPS");
+	text[6].setString("7 - ONE MORE BULLETS");
 }
 
 void UiUpgrade::Update(float dt)

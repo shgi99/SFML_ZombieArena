@@ -22,7 +22,6 @@ void SceneGame::Init()
 	uiHud = AddGo(new UiHud("UI Hud"));
 	uiUpgrade = AddGo(new UiUpgrade("UI Upgrade"));
 	uiGameOver = AddGo(new UiGameOver("UI Game Over"));
-
 	Scene::Init();
 }
 
@@ -35,14 +34,22 @@ void SceneGame::Enter()
 {
 	FRAMEWORK.GetWindow().setMouseCursorVisible(false);
 	sf::Vector2f size = FRAMEWORK.GetWindowSizeF();
+	SOUND_MGR.PlayBgm("sound/cunning_city.mp3");
 	cursor.setTexture(TEXTURE_MGR.Get("graphics/crosshair.png"));
+	player->Reset();
 	Utils::SetOrigin(cursor, Origins::MC);
 	worldView.setSize(size);
 	worldView.setCenter(0.f, 0.f);
 	wave = 0;
 	setWaveTimer = 0.f;
+	score = 0;
+	isGameOver = false;
+	isUpgrade = false;
+	isWaveReady = false;
 	uiView.setSize(size);
 	uiView.setCenter(size.x * 0.5f, size.y * 0.5f);
+	uiUpgrade->SetActive(!isUpgrade);
+	uiGameOver->SetActive(isGameOver);
 	// 타일맵의 경계를 가져옴
 	tileMapBound = FindGo("Tile Map")->GetLocalBounds();
 
@@ -73,6 +80,7 @@ void SceneGame::Exit()
 		bulletPool.Return(bullet);
 	}
 	bullets.clear();
+	SOUND_MGR.StopBgm();
 	Scene::Exit();
 }
 
@@ -85,46 +93,58 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	window.setView(saveView);
 }
 
+
 void SceneGame::Update(float dt)
 {
 	sf::Vector2f mousePos = ScreenToUi(InputMgr::GetMousePosition());
 	cursor.setPosition(mousePos);
 
 	Scene::Update(dt);
-	if (InputMgr::GetKeyDown(sf::Keyboard::Escape))
+	if (InputMgr::GetKeyDown(sf::Keyboard::Num0))
 	{
-		SCENE_MGR.ChangeScene(SceneIds::Game);
+		SetNewWave(7);
 	}
 
-	if (InputMgr::GetKeyDown(sf::Keyboard::BackSpace))
+	if (InputMgr::GetKeyDown(sf::Keyboard::B))
 	{
-		uiUpgrade->SetActive(!uiUpgrade->IsActive());
-	}
-
-	//if (InputMgr::GetKeyDown(sf::Keyboard::Space))
-	//{
-	//	SpawnZombies(10);
-	//}
-
-	if (InputMgr::GetKeyDown(sf::Keyboard::Enter))
-	{
-		uiGameOver->SetActive(!uiGameOver->IsActive());
+		SpawnBossZombies();
 	}
 
 	if (player != nullptr)
 	{
 		worldView.setCenter(player->GetPosition());
 	}
-
-	if (zombies.size() == 0)
+	if(!isGameOver)
 	{
-		setWaveTimer += dt;
-		if (setWaveTimer >= 3.f)
+		if (zombies.size() == 0)
 		{
-			wave++;
-			SetNewWave(wave);
-			SetUiHud();
-			setWaveTimer = 0.f;
+			if (wave == 0)
+			{
+				isUpgrade = false;
+			}
+
+			uiUpgrade->SetActive(isUpgrade);
+
+			if (!isUpgrade)
+			{
+				setWaveTimer += dt;
+				if (setWaveTimer >= 3.f)
+				{
+					wave++;
+					SetNewWave(wave);
+					SetUiHud();
+					setWaveTimer = 0.f;
+					isUpgrade = true;
+				}
+			}
+		}
+	}
+	else
+	{
+		uiGameOver->SetActive(isGameOver);
+		if (InputMgr::GetKeyDown(sf::Keyboard::Enter))
+		{
+			SCENE_MGR.ChangeScene(SceneIds::Game);
 		}
 	}
 }
@@ -150,6 +170,24 @@ void SceneGame::SpawnZombies(int count)
 	}
 }
 
+void SceneGame::SpawnBossZombies()
+{
+	ZombieGo* zombie = zombiePool.Take();
+	zombies.push_back(zombie);
+
+	ZombieGo::Types zombieType = ZombieGo::Types::Boss;
+	zombie->SetType(zombieType);
+
+	// 타일맵 경계 내 랜덤 위치 설정
+	sf::Vector2f pos;
+	pos.x = Utils::RandomRange(tileMapBound.left, tileMapBound.left + tileMapBound.width);
+	pos.y = Utils::RandomRange(tileMapBound.top, tileMapBound.top + tileMapBound.height);
+
+	// 좀비 위치 설정
+	zombie->SetPosition(pos);
+	AddGo(zombie);
+}
+
 BulletGo* SceneGame::TakeBullet()
 {
 	BulletGo* bullet = bulletPool.Take();
@@ -166,28 +204,86 @@ void SceneGame::ReturnBullet(BulletGo* bullet)
 	bullets.remove(bullet);
 }
 
+void SceneGame::OnKillZombie(ZombieGo* zombie)
+{
+	score += (wave * 100);
+	zombies.remove(zombie);
+	SetUiHud();
+}
+
 void SceneGame::OnZombieDie(ZombieGo* zombie)
 {
 	RemoveGo(zombie);
 	zombiePool.Return(zombie);
-	zombies.remove(zombie);
+}
+
+void SceneGame::OnPlayerDie()
+{
+	isGameOver = true;
+	player->OnDie();
 }
 
 void SceneGame::OnUpgrade(Upgrade up)
 {
-	uiUpgrade->SetActive(false);
-	std::cout << (int) up;
+	switch (up)
+	{
+	case Upgrade::RateOfFire:
+	{
+		player->UpgradeRateOfFire();
+		break;
+	}
+	case Upgrade::ClipSize:
+	{
+		player->UpgradeClipSize();
+		break;
+	}
+	case Upgrade::MaxHealth:
+	{
+		player->UpgradeMaxhealth();
+		break;
+	}
+	case Upgrade::RunSpeed:
+	{
+		player->UpgradeRunSpeed();
+		break;
+	}
+	case Upgrade::HealthPickups:
+	{
+		player->UpgradeHealthPickup();
+		break;
+	}
+	case Upgrade::AmmoPickups:
+	{
+		player->UpgradeAmmoPickup();
+		break;
+	}
+	case Upgrade::OneMoreBullet:
+	{
+		player->UpgradeGun();
+		break;
+	}
+	}
+	SOUND_MGR.PlaySfx("sound/powerup.wav");
+	isUpgrade = false;
+	uiUpgrade->SetActive(isUpgrade);
 }
 
 void SceneGame::SetNewWave(int wave)
 {
-	SpawnZombies(10 * wave);
-	for (auto zombie : zombies)
+	if (wave == 7)
 	{
-		zombie->SetMaxHp(zombie->GetMaxHp() + ((wave - 1) * 10));
-		zombie->SetHp(zombie->GetMaxHp());
-		zombie->SetDamage(zombie->GetDamage() + ((wave - 1) * 5));
-		zombie->SetSpeed(zombie->GetSpeed() + ((wave - 1) * 10.f));
+		SpawnBossZombies();
+	}
+	else
+	{
+		SpawnZombies(10 * wave);
+		for (auto zombie : zombies)
+		{
+			zombie->SetMaxHp(zombie->GetMaxHp() + ((wave - 1) * 10));
+			zombie->SetHp(zombie->GetMaxHp());
+			zombie->SetDamage(zombie->GetDamage() + ((wave - 1) * 5));
+			zombie->SetSpeed(zombie->GetSpeed() + ((wave - 1) * 10.f));
+		}
 	}
 }
 
@@ -195,5 +291,8 @@ void SceneGame::SetUiHud()
 {
 	uiHud->SetAmmo(player->GetCurrentAmmo(), player->GetMaxAmmo());
 	uiHud->SetWave(wave);
+	uiHud->SetHp(player->GetHp(), player->GetMaxHp());
+	uiHud->SetScore(score);
+	uiHud->SetZombieCount(zombies.size());
 }
 

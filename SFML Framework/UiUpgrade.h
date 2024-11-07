@@ -7,6 +7,7 @@ enum class Upgrade
 	RunSpeed,
 	HealthPickups,
 	AmmoPickups,
+	OneMoreBullet,
 	Count,
 };
 
@@ -14,7 +15,7 @@ class UiUpgrade : public GameObject
 {
 protected:
 	sf::Sprite backGroundSprite;
-	sf::Text text[6];
+	sf::Text text[7];
 public:
 	UiUpgrade(const std::string& name = "");
 	~UiUpgrade() = default;
