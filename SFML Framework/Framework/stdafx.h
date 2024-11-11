@@ -7,13 +7,16 @@
 #include <unordered_set>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
+#include <codecvt>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
-#include "Variables.h"
 #include "Defines.h"
 #include "Utils.h"
+#include "DataTable.h"
+#include "StringTable.h"
 #include "Singleton.h"
 #include "Framework.h"
 #include "InputMgr.h"
@@ -27,4 +30,6 @@
 #include "DebugBox.h"
 #include "HitBox.h"
 #include "SoundMgr.h"
+#include "DataTableMgr.h"
+#include "Variables.h"
 

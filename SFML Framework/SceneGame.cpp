@@ -32,15 +32,15 @@ void SceneGame::Release()
 
 void SceneGame::Enter()
 {
+	Scene::Enter();
 	FRAMEWORK.GetWindow().setMouseCursorVisible(false);
 	sf::Vector2f size = FRAMEWORK.GetWindowSizeF();
-	SOUND_MGR.PlayBgm("sound/cunning_city.mp3");
+	SOUND_MGR.PlayBgm("sound/cunning_city.mp3", true);
 	cursor.setTexture(TEXTURE_MGR.Get("graphics/crosshair.png"));
 	player->Reset();
 	Utils::SetOrigin(cursor, Origins::MC);
 	worldView.setSize(size);
 	worldView.setCenter(0.f, 0.f);
-	wave = 0;
 	setWaveTimer = 0.f;
 	score = 0;
 	isGameOver = false;
@@ -61,7 +61,7 @@ void SceneGame::Enter()
 	// 플레이어의 위치를 설정된 랜덤 위치로 이동
 	player->SetPosition(pos);
 
-	Scene::Enter();
+	LoadGameData("savedata.txt");
 	SetUiHud();
 }
 
@@ -79,6 +79,7 @@ void SceneGame::Exit()
 		RemoveGo(bullet);
 		bulletPool.Return(bullet);
 	}
+	SaveGameData("savedata.txt");
 	bullets.clear();
 	SOUND_MGR.StopBgm();
 	Scene::Exit();
@@ -96,6 +97,24 @@ void SceneGame::Draw(sf::RenderWindow& window)
 
 void SceneGame::Update(float dt)
 {
+	if (InputMgr::GetKeyDown(sf::Keyboard::Num1))
+	{
+		Variables::currentLang = Languages::Korean;
+		STRING_TABLE->Load();
+		OnLocalize(Variables::currentLang);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Num2))
+	{
+		Variables::currentLang = Languages::English;
+		STRING_TABLE->Load();
+		OnLocalize(Variables::currentLang);
+	}
+	if (InputMgr::GetKeyDown(sf::Keyboard::Num3))
+	{
+		Variables::currentLang = Languages::Japanese;
+		STRING_TABLE->Load();
+		OnLocalize(Variables::currentLang);
+	}
 	sf::Vector2f mousePos = ScreenToUi(InputMgr::GetMousePosition());
 	cursor.setPosition(mousePos);
 
@@ -104,7 +123,10 @@ void SceneGame::Update(float dt)
 	{
 		SetNewWave(7);
 	}
-
+	if (InputMgr::GetKeyDown(sf::Keyboard::C))
+	{
+		player->SetGunEnhanced(40);
+	}
 	if (InputMgr::GetKeyDown(sf::Keyboard::B))
 	{
 		SpawnBossZombies();
@@ -147,6 +169,7 @@ void SceneGame::Update(float dt)
 			SCENE_MGR.ChangeScene(SceneIds::Game);
 		}
 	}
+
 }
 
 void SceneGame::SpawnZombies(int count)
@@ -220,6 +243,7 @@ void SceneGame::OnZombieDie(ZombieGo* zombie)
 void SceneGame::OnPlayerDie()
 {
 	isGameOver = true;
+	SaveGameData("savedata.txt");
 	player->OnDie();
 }
 
@@ -230,36 +254,43 @@ void SceneGame::OnUpgrade(Upgrade up)
 	case Upgrade::RateOfFire:
 	{
 		player->UpgradeRateOfFire();
+		upgradeFireCnt++;
 		break;
 	}
 	case Upgrade::ClipSize:
 	{
 		player->UpgradeClipSize();
+		upgradeClipCnt++;
 		break;
 	}
 	case Upgrade::MaxHealth:
 	{
 		player->UpgradeMaxhealth();
+		upgradeMaxHpCnt++;
 		break;
 	}
 	case Upgrade::RunSpeed:
 	{
 		player->UpgradeRunSpeed();
+		upgradeRunCnt++;
 		break;
 	}
 	case Upgrade::HealthPickups:
 	{
 		player->UpgradeHealthPickup();
+		upgradeHealItemCnt++;
 		break;
 	}
 	case Upgrade::AmmoPickups:
 	{
 		player->UpgradeAmmoPickup();
+		upgradeAmmoItenCnt++;
 		break;
 	}
 	case Upgrade::OneMoreBullet:
 	{
 		player->UpgradeGun();
+		upgradeBullets++;
 		break;
 	}
 	}
@@ -289,10 +320,97 @@ void SceneGame::SetNewWave(int wave)
 
 void SceneGame::SetUiHud()
 {
+
 	uiHud->SetAmmo(player->GetCurrentAmmo(), player->GetMaxAmmo());
 	uiHud->SetWave(wave);
 	uiHud->SetHp(player->GetHp(), player->GetMaxHp());
 	uiHud->SetScore(score);
+	if (score > highScore)
+	{
+		highScore = score;
+		uiHud->SetHighScore(score);
+	}
+	else
+	{
+		uiHud->SetHighScore(highScore);
+	}
 	uiHud->SetZombieCount(zombies.size());
+}
+
+void SceneGame::SaveGameData(const std::string& filename)
+{
+	std::ofstream outFile(filename);
+
+	if (!outFile) {
+		std::cerr << "파일을 열 수 없습니다." << std::endl;
+		return;
+	}
+	outFile << highScore << std::endl;
+	outFile << wave << std::endl;
+	outFile << upgradeFireCnt << std::endl;
+	outFile << upgradeClipCnt << std::endl;
+	outFile << upgradeMaxHpCnt << std::endl;
+	outFile << upgradeRunCnt << std::endl;
+	outFile << upgradeHealItemCnt << std::endl;
+	outFile << upgradeAmmoItenCnt << std::endl;
+	outFile << upgradeBullets << std::endl;
+	outFile.close();
+
+	return;
+}
+
+void SceneGame::LoadGameData(const std::string& filename)
+{
+	std::ifstream inFile(filename);
+
+	if (!inFile) {
+		std::cerr << "파일을 열 수 없습니다." << std::endl;
+		return;
+	}
+
+	inFile >> highScore;
+	inFile >> wave;
+	inFile >> upgradeFireCnt;
+	inFile >> upgradeClipCnt;
+	inFile >> upgradeMaxHpCnt;
+	inFile >> upgradeRunCnt;
+	inFile >> upgradeHealItemCnt;
+	inFile >> upgradeAmmoItenCnt;
+	inFile >> upgradeBullets;
+
+	SetUiHud();
+	SetNewWave(wave);
+
+	for (int i = 0; i < upgradeFireCnt; i++)
+	{
+		player->UpgradeRateOfFire();
+	}
+	for (int i = 0; i < upgradeClipCnt; i++)
+	{
+		player->UpgradeClipSize();
+	}
+	for (int i = 0; i < upgradeMaxHpCnt; i++)
+	{
+		player->UpgradeMaxhealth();
+	}
+	for (int i = 0; i < upgradeRunCnt; i++)
+	{
+		player->UpgradeRunSpeed();
+	}
+	for (int i = 0; i < upgradeHealItemCnt; i++)
+	{
+		player->UpgradeHealthPickup();
+	}
+	for (int i = 0; i < upgradeAmmoItenCnt; i++)
+	{
+		player->UpgradeAmmoPickup();
+	}
+	for (int i = 0; i < upgradeBullets; i++)
+	{
+		player->UpgradeGun();
+	}
+
+	inFile.close();
+	return;
 }
 

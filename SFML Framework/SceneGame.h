@@ -32,6 +32,16 @@ protected:
 	float setWaveTimer = 0.f;
 	int wave = 0;
 	int score = 0;
+	int highScore = 0;
+
+	int upgradeFireCnt = 0;
+	int upgradeClipCnt = 0;
+	int upgradeMaxHpCnt = 0;
+	int upgradeRunCnt = 0;
+	int upgradeHealItemCnt = 0;
+	int upgradeAmmoItenCnt = 0;
+	int upgradeBullets = 0;
+
 public:
 	SceneGame();
 	virtual ~SceneGame() = default;
@@ -58,5 +68,13 @@ public:
 	void SetNewWave(int wave);
 
 	void SetUiHud();
+
+	void SaveGameData(const std::string& filename);
+	void LoadGameData(const std::string& filename);
+
+	int GetScore() const { return score; }
+	int GetHighScore() const { return highScore; }
+	int GetWave() const { return wave; }
+	int GetZombieCnt() const { return zombies.size(); }
 };
 

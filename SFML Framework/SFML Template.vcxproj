@@ -147,6 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Framework\DataTableMgr.cpp" />
+    <ClCompile Include="Framework\DataTable.cpp" />
     <ClCompile Include="Framework\DebugBox.cpp" />
     <ClCompile Include="Framework\Framework.cpp" />
     <ClCompile Include="Framework\GameObject.cpp" />
@@ -164,9 +166,11 @@
     <ClCompile Include="Framework\Utils.cpp" />
     <ClCompile Include="Framework\HitBox.cpp" />
     <ClCompile Include="ItemSpawnerGo.cpp" />
+    <ClCompile Include="ItemTable.cpp" />
     <ClCompile Include="PlayerGo.cpp" />
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="Framework\SoundMgr.cpp" />
+    <ClCompile Include="Framework\StringTable.cpp" />
     <ClCompile Include="TileMap.cpp" />
     <ClCompile Include="UiGameOver.cpp" />
     <ClCompile Include="UiHud.cpp" />
@@ -175,8 +179,11 @@
     <ClCompile Include="ZombieGo.cpp" />
     <ClCompile Include="BulletGo.cpp" />
     <ClCompile Include="ItemGo.cpp" />
+    <ClCompile Include="ZombieTable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\DataTableMgr.h" />
+    <ClInclude Include="Framework\DataTable.h" />
     <ClInclude Include="Framework\DebugBox.h" />
     <ClInclude Include="Framework\Defines.h" />
     <ClInclude Include="Framework\Framework.h" />
@@ -195,9 +202,11 @@
     <ClInclude Include="Framework\Utils.h" />
     <ClInclude Include="Framework\HitBox.h" />
     <ClInclude Include="ItemSpawnerGo.h" />
+    <ClInclude Include="ItemTable.h" />
     <ClInclude Include="PlayerGo.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="Framework\SoundMgr.h" />
+    <ClInclude Include="Framework\StringTable.h" />
     <ClInclude Include="TileMap.h" />
     <ClInclude Include="UiGameOver.h" />
     <ClInclude Include="UiHud.h" />
@@ -206,6 +215,7 @@
     <ClInclude Include="ZombieGo.h" />
     <ClInclude Include="BulletGo.h" />
     <ClInclude Include="ItemGo.h" />
+    <ClInclude Include="ZombieTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

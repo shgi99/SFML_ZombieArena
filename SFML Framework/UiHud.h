@@ -1,8 +1,10 @@
 #pragma once
-
+class SceneGame;
 class UiHud : public GameObject
 {
 protected:
+	SceneGame* sceneGame;
+
 	sf::Text textScore;
 	sf::Text textHighScore;
 
@@ -46,4 +48,6 @@ public:
 	void SetShunpoGauge(float timer, float interval);
 	void SetWave(int w);
 	void SetZombieCount(int count);
+
+	void OnLocalize(Languages lang) override;
 };

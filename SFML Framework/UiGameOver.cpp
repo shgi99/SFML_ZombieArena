@@ -49,13 +49,13 @@ void UiGameOver::Release()
 
 void UiGameOver::Reset()
 {
-	text.setFont(FONT_MGR.Get("fonts/zombiecontrol.ttf"));
+	text.setFont(FONT_MGR.Get("fonts/malgun.ttf"));
 	text.setCharacterSize(150.f);
 	text.setPosition(FRAMEWORK.GetWindowSizeF() * 0.5f);
 	text.setFillColor(sf::Color::Red);
 	text.setOutlineColor(sf::Color::Black);
 	text.setOutlineThickness(1.f);
-	text.setString("PRESS ENTER\nTO RESTART..");
+	text.setString(STRING_TABLE->Get("GAMEOVER"));
 	Utils::SetOrigin(text, Origins::MC);
 }
 
@@ -66,4 +66,9 @@ void UiGameOver::Update(float dt)
 void UiGameOver::Draw(sf::RenderWindow& window)
 {
 	window.draw(text);
+}
+
+void UiGameOver::OnLocalize(Languages lang)
+{
+	text.setString(STRING_TABLE->Get("GAMEOVER", lang));
 }

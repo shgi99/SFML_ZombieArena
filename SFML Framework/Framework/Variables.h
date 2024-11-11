@@ -4,4 +4,5 @@ class Variables
 {
 public:
 	static bool isDrawHitBox;
+	static Languages currentLang;
 };

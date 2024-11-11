@@ -3,6 +3,7 @@
 #include "PlayerGo.h"
 #include "TileMap.h"
 #include "SceneGame.h"
+#include "ZombieTable.h"
 ZombieGo::ZombieGo(const std::string& name)
 	: GameObject(name)
 {
@@ -173,42 +174,12 @@ void ZombieGo::Draw(sf::RenderWindow& window)
 
 void ZombieGo::SetType(Types type)
 {
-	this->types = type;
-	switch (this->types)
-	{
-	case Types::Bloater:
-		textureId = "graphics/bloater.png";
-		damage = 40;
-		maxHp = 50;
-		speed = 50.f;
-		break;
-	case Types::Chaser:
-		textureId = "graphics/chaser.png";
-		damage = 10;
-		maxHp = 20;
-		speed = 150.f;
-		break;
-	case Types::Crawler:
-		textureId = "graphics/crawler.png";
-		damage = 20;
-		maxHp = 10;
-		speed = 100.f;
-		break;
-	case Types::Boss:
-		textureId = "graphics/player.png";
-		damage = 60;
-		maxHp = 700;
-		speed = 50.f;
-		body.setColor(sf::Color::Red);
-		SetScale({ 2.f, 2.f });
-		break;
-	case Types::Death:
-		textureId = "graphics/blood.png";
-		damage = 0;
-		maxHp = 0;
-		speed = 0.f;
-		break;
-	}
+	const auto& data = ZOMBIE_TABLE->Get(type);
+	types = type;
+	textureId = data.textureId;
+	damage = data.damage;
+	maxHp = data.maxHp;
+	speed = data.speed;
 
 	body.setTexture(TEXTURE_MGR.Get(textureId), true); // true를 넣어줘야 다른 크기여도 알맞게 생성됨
 	hp = maxHp;

@@ -1,0 +1,16 @@
+ID,Korean,English,Japanese
+HI,안녕,Hello,おはようございます
+BYE,잘가,Good Bye,さようなら
+THANK,고마워,Thanks,ありがとうございます
+UPGRADE_FIRE,1 - 사격 주기를 짧게합니다,1 - INCREASED RATE OF FIRE,1 - 射撃周期を短くします
+UPGRADE_RELOAD,2 - 장전을 빠르게 합니다,2 - INCREASED CLIP SIZECNEXT RELOAD,2 - 装填を速くします
+UPGRADE_MAXHP,3 - 최대 체력을 증가합니다,3 - INCREASED MAX HEALTH,3 - 最大体力を増加します
+UPGRADE_RUN,4 - 달리기 속도가 증가합니다,4 - INCREASED RUN SPEED,4 - 走る速度が増します
+UPGRADE_HP_PICKUP,5 - 체력 아이템이 좋아집니다,5 - MORE AND BETTER HEALTH PICKUPS,5 - 体力アイテムがよくなります
+UPGRADE_AMMO_PICKUP,6 - 총알 아이템이 좋아집니다,6 - MORE AND BETTER AMMO PICKUPS,6 - 銃弾のアイテムがよくなります
+UPGRADE_GUN,7 - 쏘는 총알이 1개 증가합니다,7 - ONE MORE BULLETS,7 - 撃つ弾が1個増加します
+SCORE,점수: ,SCORE: ,屁: 
+HIGHSCORE,최고점수: ,HIGH SCORE: ,最高: 
+WAVE,웨이브: ,WAVE: ,振る: 
+ZOMBIE_COUNT,좀비 수: ,ZOMBIES: ,ゾンビ: 
+GAMEOVER,엔터키를 눌러 다시 시작..,PRESS ENTER TO RESTART..,エンターキーを押して もう一回、スタート..

@@ -78,6 +78,7 @@ public:
 	void UpgradeHealthPickup() { plusMaxHp += 10; }
 	void UpgradeAmmoPickup() { plusMaxAmmo += 2; }
 	void UpgradeGun() { gunEnhanced++; }
+	void SetGunEnhanced(int gunEnhance) { gunEnhanced = gunEnhance; }
 
 	int GetCurrentAmmo() const { return currentAmmo; }
 	int GetMaxAmmo() const { return maxAmmo; }

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "UiHud.h"
-
+#include "SceneGame.h"
 UiHud::UiHud(const std::string& name)
 	: GameObject(name)
 {
@@ -47,8 +47,10 @@ void UiHud::Release()
 
 void UiHud::Reset()
 {
+	sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene());
+
 	float textSize = 50.f;
-	sf::Font& font = FONT_MGR.Get("fonts/zombiecontrol.ttf");
+	sf::Font& font = FONT_MGR.Get("fonts/malgun.ttf");
 
 	textScore.setFont(font);
 	textScore.setCharacterSize(textSize);
@@ -157,13 +159,13 @@ void UiHud::Draw(sf::RenderWindow& window)
 
 void UiHud::SetScore(int s)
 {
-	textScore.setString("SCORE: " + std::to_string(s));
+	textScore.setString(STRING_TABLE->Get("SCORE") + std::to_wstring(s));
 	Utils::SetOrigin(textScore, Origins::TL);
 }
 
 void UiHud::SetHighScore(int s)
 {
-	textHighScore.setString("HIGH SCORE: " + std::to_string(s));
+	textHighScore.setString(STRING_TABLE->Get("HIGHSCORE") + std::to_wstring(s));
 	Utils::SetOrigin(textHighScore, Origins::TR);
 }
 
@@ -205,12 +207,24 @@ void UiHud::SetShunpoGauge(float timer, float interval)
 
 void UiHud::SetWave(int w)
 {
-	textWave.setString("WAVE: " + std::to_string(w));
+	textWave.setString(STRING_TABLE->Get("WAVE") + std::to_wstring(w));
 	Utils::SetOrigin(textWave, Origins::BR);
 }
 
 void UiHud::SetZombieCount(int count)
 {
-	textZombieCount.setString("ZOMBIES: " + std::to_string(count));
+	textZombieCount.setString(STRING_TABLE->Get("ZOMBIE_COUNT") + std::to_wstring(count));
 	Utils::SetOrigin(textZombieCount, Origins::BR);
+}
+
+void UiHud::OnLocalize(Languages lang)
+{
+	int score = sceneGame->GetScore();
+	int highScore = sceneGame->GetHighScore();
+	int wave = sceneGame->GetWave();
+	int zombieCnt = sceneGame->GetZombieCnt();
+	textScore.setString(STRING_TABLE->Get("SCORE", lang) + std::to_wstring(score));
+	textHighScore.setString(STRING_TABLE->Get("HIGHSCORE", lang) + std::to_wstring(highScore));
+	textWave.setString(STRING_TABLE->Get("WAVE", lang) + std::to_wstring(wave));
+	textZombieCount.setString(STRING_TABLE->Get("ZOMBIE_COUNT", lang) + std::to_wstring(zombieCnt));
 }

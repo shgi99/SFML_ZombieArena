@@ -52,7 +52,7 @@ void UiUpgrade::Reset()
 	backGroundSprite.setPosition(0.f, 0.f);
 
 	float textSize = 100.f;
-	sf::Font& font = FONT_MGR.Get("fonts/zombiecontrol.ttf");
+	sf::Font& font = FONT_MGR.Get("fonts/malgun.ttf");
 
 	for (int i = 0; i < _countof(text); i++)
 	{
@@ -62,13 +62,13 @@ void UiUpgrade::Reset()
 		Utils::SetOrigin(text[i], Origins::TL);
 		text[i].setPosition(100.f, 100.f + (100.f * i));
 	}
-	text[0].setString("1 - INCREASED RATE OF FIRE");
-	text[1].setString("2 - INCREASED CLIP SIZECNEXT RELOAD");
-	text[2].setString("3 - INCREASED MAX HEALTH");
-	text[3].setString("4 - INCREASED RUN SPEED");
-	text[4].setString("5 - MORE AND BETTER HEALTH PICKUPS");
-	text[5].setString("6 - MORE AND BETTER AMMO PICKUPS");
-	text[6].setString("7 - ONE MORE BULLETS");
+	text[0].setString(STRING_TABLE->Get("UPGRADE_FIRE"));
+	text[1].setString(STRING_TABLE->Get("UPGRADE_RELOAD"));
+	text[2].setString(STRING_TABLE->Get("UPGRADE_MAXHP"));
+	text[3].setString(STRING_TABLE->Get("UPGRADE_RUN"));
+	text[4].setString(STRING_TABLE->Get("UPGRADE_HP_PICKUP"));
+	text[5].setString(STRING_TABLE->Get("UPGRADE_AMMO_PICKUP"));
+	text[6].setString(STRING_TABLE->Get("UPGRADE_GUN"));
 }
 
 void UiUpgrade::Update(float dt)
@@ -106,4 +106,16 @@ void UiUpgrade::Draw(sf::RenderWindow& window)
 	{
 		window.draw(text[i]);
 	}
+}
+
+void UiUpgrade::OnLocalize(Languages lang)
+{
+	text[0].setString(STRING_TABLE->Get("UPGRADE_FIRE", lang));
+	text[1].setString(STRING_TABLE->Get("UPGRADE_RELOAD", lang));
+	text[2].setString(STRING_TABLE->Get("UPGRADE_MAXHP", lang));
+	text[3].setString(STRING_TABLE->Get("UPGRADE_RUN", lang));
+	text[4].setString(STRING_TABLE->Get("UPGRADE_HP_PICKUP", lang));
+	text[5].setString(STRING_TABLE->Get("UPGRADE_AMMO_PICKUP", lang));
+	text[6].setString(STRING_TABLE->Get("UPGRADE_GUN", lang));
+	SetOrigin(originPreset);
 }

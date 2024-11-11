@@ -4,9 +4,11 @@
 
 void Framework::Init(int width, int height, const std::string& name)
 {
+
     FONT_MGR.Load("fonts/DS-DIGI.ttf");
 
 	window.create(sf::VideoMode(width, height), name);
+    DATATABLE_MGR.Init();
     Utils::Init();
     SCENE_MGR.Init();
     SOUND_MGR.Init();

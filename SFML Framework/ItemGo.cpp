@@ -2,6 +2,7 @@
 #include "ItemGo.h"
 #include "ItemSpawnerGo.h"
 #include "PlayerGo.h"
+#include "ItemTable.h"
 ItemGo::ItemGo(const std::string& name)
 	: GameObject(name)
 {
@@ -109,16 +110,8 @@ void ItemGo::Draw(sf::RenderWindow& window)
 
 void ItemGo::SetType(Types type)
 {
-	this->types = type;
-	switch (this->types)
-	{
-	case Types::ammo:
-		textureId = "graphics/ammo_pickup.png";
-		break;
-	case Types::health:
-		textureId = "graphics/health_pickup.png";
-		break;
-	}
-
+	const auto& data = ITEM_TABLE->Get(type);
+	types = type;
+	textureId = data.textureId;
 	body.setTexture(TEXTURE_MGR.Get(textureId), true);
 }
