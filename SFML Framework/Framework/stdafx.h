@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <codecvt>
+#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -20,6 +21,7 @@
 #include "Singleton.h"
 #include "Framework.h"
 #include "InputMgr.h"
+#include "Animator.h"
 #include "ResourceMgr.h"
 #include "GameObject.h"
 #include "TextGo.h"

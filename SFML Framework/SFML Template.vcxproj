@@ -147,6 +147,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AniPlayer.cpp" />
+    <ClCompile Include="AniPlayer2.cpp" />
     <ClCompile Include="Framework\DataTableMgr.cpp" />
     <ClCompile Include="Framework\DataTable.cpp" />
     <ClCompile Include="Framework\DebugBox.cpp" />
@@ -182,6 +186,10 @@
     <ClCompile Include="ZombieTable.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="Animator.h" />
+    <ClInclude Include="AniPlayer.h" />
+    <ClInclude Include="AniPlayer2.h" />
     <ClInclude Include="Framework\DataTableMgr.h" />
     <ClInclude Include="Framework\DataTable.h" />
     <ClInclude Include="Framework\DebugBox.h" />
@@ -189,6 +197,7 @@
     <ClInclude Include="Framework\Framework.h" />
     <ClInclude Include="Framework\GameObject.h" />
     <ClInclude Include="Framework\InputMgr.h" />
+    <ClInclude Include="Framework\json.hpp" />
     <ClInclude Include="Framework\ObjectPool.h" />
     <ClInclude Include="Framework\ResourceMgr.h" />
     <ClInclude Include="Framework\Scene.h" />
