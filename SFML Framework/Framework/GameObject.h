@@ -67,6 +67,8 @@ public:
 	virtual void LateUpdate(float dt) {}
 	virtual void FixedUpdate(float dt) {}
 	virtual void Draw(sf::RenderWindow& window) = 0;
+
+	virtual void OnLocalize(Languages lang) {}
 };
 
 struct DrawOrderComparer

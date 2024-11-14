@@ -140,6 +140,18 @@ sf::Vector2f Utils::GetNormal(const sf::Vector2f& vec)
     return vec / mag;
 }
 
+sf::Vector2f Utils::RotateVector(const sf::Vector2f& vec, float degrees)
+{   
+    // 각도를 라디안으로 변환
+    float radians = Utils::DegreeToRadian(degrees);
+
+    // 벡터 회전 공식 적용
+    float rotatedX = std::cos(radians) * vec.x - std::sin(radians) * vec.y;
+    float rotatedY = std::sin(radians) * vec.x + std::cos(radians) * vec.y;
+
+    return sf::Vector2f(rotatedX, rotatedY);
+}
+
 float Utils::Distance(const sf::Vector2f& p1, const sf::Vector2f& p2)
 {
     return Magnitude(p2 - p1);

@@ -1,0 +1,16 @@
+ID,STRING
+HI,おはようございます
+BYE,さようなら
+THANK,ありがとうございます
+UPGRADE_FIRE,1 - 射撃周期を短くします
+UPGRADE_RELOAD,2 - 装填を速くします
+UPGRADE_MAXHP,3 - 最大体力を増加します
+UPGRADE_RUN,4 - 走る速度が増します
+UPGRADE_HP_PICKUP,5 - 体力アイテムがよくなります
+UPGRADE_AMMO_PICKUP,6 - 銃弾のアイテムがよくなります
+UPGRADE_GUN,7 - 撃つ弾が1個増加します
+SCORE,屁: 
+HIGHSCORE,最高: 
+WAVE,振る: 
+ZOMBIE_COUNT,ゾンビ: 
+GAMEOVER,エンターキーを押して もう一回、スタート..

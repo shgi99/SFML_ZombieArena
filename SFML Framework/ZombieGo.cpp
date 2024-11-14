@@ -3,6 +3,7 @@
 #include "PlayerGo.h"
 #include "TileMap.h"
 #include "SceneGame.h"
+#include "ZombieTable.h"
 ZombieGo::ZombieGo(const std::string& name)
 	: GameObject(name)
 {
@@ -59,18 +60,30 @@ void ZombieGo::Reset()
 	player = dynamic_cast<PlayerGo*>(SCENE_MGR.GetCurrentScene()->FindGo("Player"));
 	sceneGame = dynamic_cast<SceneGame*>(SCENE_MGR.GetCurrentScene());
 	body.setTexture(TEXTURE_MGR.Get(textureId));
-	damage = 20;
+	gaugeHpMaxSize = { body.getLocalBounds().width, 5.f };
+	gaugeHp.setFillColor(sf::Color::Red);
+	gaugeHp.setSize(gaugeHpMaxSize);
+	gaugeHp.setOutlineColor(sf::Color::Black);
+	gaugeHp.setOutlineThickness(3.f);
+	Utils::SetOrigin(gaugeHp, Origins::BL);
+	gaugeMaxHp.setFillColor(sf::Color({ 80, 80, 80 }));
+	gaugeMaxHp.setSize(gaugeHpMaxSize);
+	gaugeMaxHp.setOutlineColor(sf::Color::Black);
+	gaugeMaxHp.setOutlineThickness(3.f);
+	Utils::SetOrigin(gaugeMaxHp, Origins::BL);
 	isDie = false;
 	eraseTimer = 0.f;
 	SetOrigin(Origins::MC);
 	SetPosition({ 0.f, 0.f });
 	SetRotation(0.f);
 	SetScale({ 1.f, 1.f });
+	BossattackTimer = 0.f;
+	gaugeHp.setPosition(position.x, position.y - body.getLocalBounds().height );
+	gaugeMaxHp.setPosition(position.x, position.y - body.getLocalBounds().height);
 }
 
 void ZombieGo::Update(float dt)
 {
-	attackTimer += dt;
 	if (isDie)
 	{
 		eraseTimer += dt;
@@ -80,12 +93,29 @@ void ZombieGo::Update(float dt)
 		}
 	}
 
+	if (types == Types::Boss)
+	{
+		BossattackTimer += dt;
+		if (BossattackTimer >= BossattackInterval)
+		{
+			speed = 2000.f;
+			if (BossattackTimer >= BossattackInterval + 0.3f)
+			{
+				BossattackTimer = 0.f;
+				speed = 50.f;
+			}
+		}
+	}
+
 	if (player != nullptr && Utils::Distance(position, player->GetPosition()) > 20.f && !isDie)
 	{
 		direction = Utils::GetNormal(player->GetPosition() - position);
 		SetRotation(Utils::Angle(direction));
 		SetPosition(position + direction * speed * dt);
 	}
+
+	gaugeHp.setPosition(position.x - body.getLocalBounds().width / 2, position.y - body.getLocalBounds().height / 2);
+	gaugeMaxHp.setPosition(position.x - body.getLocalBounds().width / 2, position.y - body.getLocalBounds().height / 2);
 	
 	TileMap* tileMap = dynamic_cast<TileMap*>(SCENE_MGR.GetCurrentScene()->FindGo("Tile Map"));
 	if (tileMap != nullptr)
@@ -113,17 +143,14 @@ void ZombieGo::Update(float dt)
 }
 void ZombieGo::FixedUpdate(float dt)
 {
-	attackTimer += dt;
-
 	sf::FloatRect bounds = GetGlobalBounds();
 	sf::FloatRect playerBounds = player->GetGlobalBounds();
 
-	if (bounds.intersects(playerBounds) && Utils::CheckCollision(GetHitBox(), player->GetHitBox()) && attackTimer >= attackInterval)
+	if (bounds.intersects(playerBounds) && Utils::CheckCollision(GetHitBox(), player->GetHitBox()))
 	{
 		HitBox& boxPlayer = player->GetHitBox();
-		if(Utils::CheckCollision(hitBox, boxPlayer) && attackTimer >= attackInterval)
+		if(Utils::CheckCollision(hitBox, boxPlayer))
 		{
-			attackTimer = 0.f;
 			player->OnDamage(damage);
 		}
 	}
@@ -140,36 +167,19 @@ sf::FloatRect ZombieGo::GetGlobalBounds() const
 void ZombieGo::Draw(sf::RenderWindow& window)
 {
 	window.draw(body);
+	window.draw(gaugeMaxHp);
+	window.draw(gaugeHp);
 	hitBox.Draw(window);
 }
 
 void ZombieGo::SetType(Types type)
 {
-	this->types = type;
-	switch (this->types)
-	{
-	case Types::Bloater:
-		textureId = "graphics/bloater.png";
-		maxHp = 50;
-		speed = 100.f;
-		break;
-	case Types::Chaser:
-		textureId = "graphics/chaser.png";
-		maxHp = 20;
-		speed = 150.f;
-		break;
-	case Types::Crawler:
-		textureId = "graphics/crawler.png";
-		maxHp = 10;
-		speed = 50.f;
-		break;
-	case Types::Death:
-		textureId = "graphics/blood.png";
-		damage = 0;
-		maxHp = 0;
-		speed = 0.f;
-		break;
-	}
+	const auto& data = ZOMBIE_TABLE->Get(type);
+	types = type;
+	textureId = data.textureId;
+	damage = data.damage;
+	maxHp = data.maxHp;
+	speed = data.speed;
 
 	body.setTexture(TEXTURE_MGR.Get(textureId), true); // true를 넣어줘야 다른 크기여도 알맞게 생성됨
 	hp = maxHp;
@@ -179,9 +189,18 @@ void ZombieGo::SetType(Types type)
 void ZombieGo::OnDamage(int d)
 {
 	hp -= d;
+	float value = (float)hp / maxHp;
+	if (value <= 0)
+	{
+		value = 0.f;
+	}
+	gaugeHp.setSize({ gaugeHpMaxSize.x * value, gaugeHpMaxSize.y });
 	if (hp <= 0 && sceneGame != nullptr)
 	{
 		SetType(Types::Death);
+		SOUND_MGR.PlaySfx("sound/splat.wav");
 		isDie = true;
+		sceneGame->OnKillZombie(this);
+		sceneGame->SetUiHud();
 	}
 }

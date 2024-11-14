@@ -32,6 +32,7 @@ void Scene::Enter()
 	for (auto obj : gameObjects)
 	{
 		obj->Reset();
+		obj->OnLocalize(Variables::currentLang);
 	}
 }
 
@@ -119,6 +120,16 @@ void Scene::OnPostDraw()
 {
 	ApplyAddGo();
 	ApplyRemoveGO();
+}
+
+void Scene::OnLocalize(Languages lang)
+{
+	for (auto obj : gameObjects)
+	{
+		if (!obj->IsActive())
+			continue;
+		obj->OnLocalize(lang);
+	}
 }
 
 void Scene::RemoveGo(GameObject* obj)

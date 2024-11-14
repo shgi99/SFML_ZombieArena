@@ -9,6 +9,7 @@ public:
 		Bloater,
 		Chaser,
 		Crawler,
+		Boss,
 		Death,
 	};
 
@@ -18,14 +19,18 @@ protected:
 	sf::Sprite body;
 	std::string textureId;
 
+	sf::RectangleShape gaugeHp;
+	sf::RectangleShape gaugeMaxHp;
+	sf::Vector2f gaugeHpMaxSize;
+	sf::Vector2f playerPos;
 	sf::Vector2f direction;
 
 	int maxHp = 0;
 	float speed = 0.f;
 	int damage = 0;
-	float attackInterval = 3.f;
+	float BossattackInterval = 7.f;
 	int hp = 0;
-	float attackTimer = 0.f;
+	float BossattackTimer = 0.f;
 
 	bool isDie = false;
 	float eraseTimer = 0.f;

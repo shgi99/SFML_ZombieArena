@@ -9,7 +9,7 @@ protected:
 	ObjectPool<ItemGo> itemPool;
 	TileMap* tileMap;
 	SceneGame* sceneGame;
-	float spawnInterval = 5.f;
+	float spawnInterval = 3.f;
 	float spawnTimer = 0.f;
 	int maxItem = 10;
 public:
